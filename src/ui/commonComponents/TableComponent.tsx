@@ -3,9 +3,10 @@ import AutoCompleteDropDown from "./AutoCompleteDropDown";
 import RateChartTable from "./RateChartTable";
 import LabourChartTable from "./LabourChartTable";
 
+
 type Row = {
   sr_no: number;
-  order_id: number;
+  parent_id: number;
   design_code: string;
   suffix: string;
   size: number;
@@ -16,58 +17,107 @@ type Row = {
   exp_dely_date: string;
   prod_setting: string;
   fixed_price: number;
+  formName: string;
 };
 
 interface TableComponentProps {
   orderId: number;
-  designData: any;
+  orderMaster: any;
+  setOrderMaster: any;
+  formObj: any;
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({
   orderId,
-  designData,
+  orderMaster,
+  setOrderMaster,
+  formObj,
 }) => {
+  const [activeIndex, setActiveIndex] = useState<number>();
   const fieldName = "orderDesign";
   const orderChartField = "orderRateChart";
   const orderLabourField = "orderLabourChart";
-  const [rowData, setRowData] = useState<Row[]>([]);
 
-  // useEffect(() => {
-  //   if (orderId) {
-  //     setRowData([
-  //       {
-  //         sr_no: 1,
-  //         order_id: orderId,
-  //         design_code: "",
-  //         suffix: "",
-  //         size: 0,
-  //         qty: 0,
-  //         calc_price: 0,
-  //         sales_price: 0,
-  //         prod_dely_date: "",
-  //         exp_dely_date: "",
-  //         prod_setting: "",
-  //         fixed_price: 0,
-  //       },
-  //     ]);
-  //   }
-  // }, [orderId]);
 
-  useEffect(() => {
-    if (designData?.length > 0) {
-      console.log(designData, "design data handleOnSelect");
-      setRowData([...designData]);
-    }
-  }, [designData]);
 
-  // useEffect(() => {
-  //   if (rowData?.length > 0) {
-  //     console.log(rowData, "row data handleOnSelect");
-  //   }
-  // }, [rowData]);
+  const initialDataLabourChart = {
+    _order_design_id: null,
+    maind_cd: "",
+    sub_cd: "",
+    by_qw: 0,
+    quantity: 0,
+    rate: 0,
+    value: 0,
+    formName: "orderLabourChart",
+  };
+
+  const [dataRateChart, setDataRateChart] = useState<any[]>([]);
+  const [dataLabourChart, setDataLabourChart] = useState<any[]>([]);
+
+  const handleRowChange = (
+    rowId: number | string,
+    field: keyof Row,
+    value: any,
+    index: number
+  ) => {
+    console.log(field,index, value)
+    let updatedRowData = [...orderMaster.order_design];
+    updatedRowData = updatedRowData.map((row, i) =>
+      i === index ? { ...row, [field]: value } : row
+    );
+    console.log(updatedRowData)
+    // setRowData(updatedRowData);
+    setOrderMaster({
+      ...orderMaster,
+      order_design: updatedRowData,
+    });
+  };
+
+  // sr_no: orderMaster.order_design?.length + 1,
+  // parent_id: orderId,
+  // design_code: "",
+  // suffix: "",
+  // size: 0,
+  // qty: 0,
+  // calc_price: 0,
+  // sales_price: 0,
+  // prod_dely_date: "",
+  // exp_dely_date: "",
+  // prod_setting: "",
+  // fixed_price: 0,
+  // formName: "orderDesign",
+
+  const addRow = () => {
+    // const newRow = Object.entries(formObj.tableOne.tableFields)
+    //   .filter(([_, field]: [string, any]) => field.show)
+    //   .reduce((acc: any, [name, field]: [string, any]) => {
+    //     acc[name] = field.type === "number" ? 0 : "";
+    //     return acc;
+    //   }, {});
+    const newRow = {
+      sr_no: orderMaster.order_design?.length + 1,
+      parent_id: orderId,
+      design_code: "",
+      suffix: "",
+      size: 0,
+      qty: 0,
+      calc_price: 0,
+      sales_price: 0,
+      prod_dely_date: "",
+      exp_dely_date: "",
+      prod_setting: "",
+      fixed_price: 0,
+      formName: "orderDesign",
+    };
+
+    setOrderMaster({
+      ...orderMaster,
+      order_design: [...orderMaster.order_design, newRow],
+    });
+  };
 
   const initailDataRateChart = {
-    order_design_id: null,
+    _order_design_id: null,
     category: "",
     sub_category: "",
     sv_ln: "",
@@ -91,97 +141,70 @@ const TableComponent: React.FC<TableComponentProps> = ({
     h_set: 0,
     sshp: 0,
     m_material: "",
+    formName: "orderRateChart",
   };
 
-  const initialDataLabourChart = {
-    order_design_id: null,
-    maind_cd: "",
-    sub_cd: "",
-    by_qw: 0,
-    quantity: 0,
-    rate: 0,
-    value: 0,
-  };
+  const handleAddTable = (row: any, index: number) => {
+    setActiveIndex(index);
+    console.log(row);
+    setOrderMaster((prev: any) => {                                                                                                                                                              
+      const updatedOrderDesign = [...prev.order_design];
+      const designIndex = index;
 
-  const [dataRateChart, setDataRateChart] = useState<any[]>([]);
-  const [dataLabourChart, setDataLabourChart] = useState<any[]>([]);
+      if (designIndex >= 0 && designIndex < updatedOrderDesign.length) {
+        const currentDesign = { ...updatedOrderDesign[designIndex] };
+        if (!currentDesign.rate_chart) {
+          currentDesign.rate_chart = [{...initailDataRateChart}];
+        }
+        if (!currentDesign.labour_chart) {
+          currentDesign.labour_chart = [{...initialDataLabourChart}];
+        }
 
-  const handleRowChange = (
-    rowId: number | string,
-    field: keyof Row,
-    value: any,
-    index: number
-  ) => {
-    // const updatedRowData = rowData.map((row) =>
-    //   row.order_id === rowId ? { ...row, [field]: value } : row
-    // );
-    let updatedRowData = [...rowData];
-    updatedRowData = updatedRowData.map((row, i) =>
-      i === index ? { ...row, [field]: value } : row
-    );
-    console.log(updatedRowData, "updatedRowData");
-    setRowData(updatedRowData);
-  };
+    //     currentDesign.rate_chart = [
+    //       ...currentDesign.rate_chart,
+    //       initailDataRateChart,
+    //     ];
+    //     currentDesign.labour_chart = [
+    //       ...currentDesign.labour_chart,
+    //       initialDataLabourChart,
+    //     ];
+        updatedOrderDesign[designIndex] = currentDesign;
+      }
 
-  const addRow = () => {
-    const newRow: Row = {
-      sr_no: rowData.length + 1,
-      order_id: orderId,
-      design_code: "",
-      suffix: "",
-      size: 0,
-      qty: 0,
-      calc_price: 0,
-      sales_price: 0,
-      prod_dely_date: "",
-      exp_dely_date: "",
-      prod_setting: "",
-      fixed_price: 0,
-    };
-    setRowData([...rowData, newRow]);
-  };
-
-  const handleAddTable = (row: Row) => {
-    if (row?.design_code) {
-      setDataRateChart([
-        ...dataRateChart,
-        { ...initailDataRateChart, order_design_id: row.sr_no },
-      ]);
-      setDataLabourChart([
-        ...dataLabourChart,
-        { ...initialDataLabourChart, order_design_id: row.sr_no },
-      ]);
-    }
-  };
-
-  const handleMainSubmit = () => {
-    const combinedData: any[] = [];
-
-    dataRateChart.forEach((item) => {
-      combinedData.push({
-        formData: item,
-        formName: orderChartField,
-      });
+      return {
+        ...prev,
+        order_design: updatedOrderDesign,
+      };
     });
-
-    dataLabourChart.forEach((item) => {
-      combinedData.push({
-        formData: item,
-        formName: orderLabourField,
-      });
-    });
-
-    rowData.forEach((item) => {
-      combinedData.push({
-        formData: item,
-        formName: fieldName,
-      });
-    });
-    console.log({ combinedData });
-    window.electron.insertFormData(combinedData);
   };
 
-  return rowData.length > 0 ? (
+  // const handleMainSubmit = () => {
+  //   const combinedData: any[] = [];
+
+  //   dataRateChart.forEach((item) => {
+  //     combinedData.push({
+  //       formData: item,
+  //       formName: orderChartField,
+  //     });
+  //   });
+
+  //   dataLabourChart.forEach((item) => {
+  //     combinedData.push({
+  //       formData: item,
+  //       formName: orderLabourField,
+  //     });
+  //   });
+
+  //   setOrderMaster.rowData.forEach((item: any) => {
+  //     combinedData.push({
+  //       formData: item,
+  //       formName: fieldName,
+  //     });
+  //   });
+  //   window.electron.insertFormData(combinedData);
+  // };
+console.log(orderMaster)
+  return (
     <>
       <div className="container-fluid">
         <div className="my-4">
@@ -192,47 +215,37 @@ const TableComponent: React.FC<TableComponentProps> = ({
           </div>
           <div>
             <div>
-              <h6 className="px-4">Design Code</h6>
+              <h6 className="px-4">{formObj.tableOne.title}</h6>
             </div>
             <table className="table table-bordered" style={{ width: "100%" }}>
               <thead>
-                <tr className="fs-10">
-                  <th>Sr No</th>
-                  <th>Order ID</th>
-                  <th>Design Code</th>
-                  <th>Suffix</th>
-                  <th>Size</th>
-                  <th>Quantity</th>
-                  <th>Calculated Price</th>
-                  <th>Sales Price</th>
-                  <th>Prod Delivery Date</th>
-                  <th>Expected Delivery Date</th>
-                  <th>Prod Setting</th>
-                  <th>Fixed Price</th>
-                  <th></th>
+                <tr>
+                  {Object.keys(formObj.tableOne.tableFields).map(
+                    (field: string, index: number) => {
+                      const fieldData = formObj.tableOne.tableFields[field];
+                      return fieldData.show ? (
+                        <th key={index} className="fs-10">
+                          {fieldData.label}
+                        </th>
+                      ) : null; // Render header only if `show` is true
+                    }
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {rowData?.map((row, index) => {
-                  console.log(row, "row handleOnSelect");
+                {orderMaster?.order_design?.map((row: any, index: any) => {
                   return (
                     <tr key={index}>
-                      {/* sr_no as a number */}
-                      <td>{Number(row.sr_no)}</td>
-
-                      {/* order_id as a number */}
-                      <td>{Number(row.order_id)}</td>
-
-                      {/* design_code dropdown */}
-                      <td>
+                      <td>{row.sr_no}</td>
+                      <td>{row.parent_id}</td>
+                       <td>
                         <AutoCompleteDropDown
                           field={{
                             name: "design_code",
                             rowId: row.order_id,
                             label: "Design Code",
                           }}
-                          formValues={rowData}
-                          setFormValues={setRowData}
+                          formValues={orderMaster.order_design}
                           fieldName={fieldName}
                           updateStateFunction={(value: string) =>
                             handleRowChange(
@@ -242,10 +255,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
                               index
                             )
                           }
+                          defaultValue={row.design_code}
                         />
                       </td>
-
-                      {/* Other fields */}
                       {[
                         "suffix",
                         "size",
@@ -292,7 +304,6 @@ const TableComponent: React.FC<TableComponentProps> = ({
                               className="form-control  fs-10"
                             />
                           ) : (
-                            // Render as a text input for other fields
                             <input
                               type="text"
                               value={row[field as keyof Row] as string}
@@ -309,11 +320,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
                           )}
                         </td>
                       ))}
-
-                      {/* Add button */}
                       <td>
                         <button
-                          onClick={() => handleAddTable(row)}
+                          onClick={() => handleAddTable(row, index)}
                           className="btn btn-success fs-10"
                         >
                           Add
@@ -327,25 +336,32 @@ const TableComponent: React.FC<TableComponentProps> = ({
           </div>
         </div>
         <div className="row">
-          <div className="col-12 my-2">
-            {dataRateChart.length > 0 ? (
-              <RateChartTable data={dataRateChart} setData={setDataRateChart} />
+          <div className="col-6 my-2">
+            { typeof activeIndex === "number" && orderMaster.order_design[activeIndex] ? (
+              <RateChartTable
+                data={orderMaster}
+                setData={setOrderMaster}
+                index={activeIndex }
+                setOrderMaster={setOrderMaster}
+              />
             ) : (
               ""
             )}
           </div>
-          <div className="col-12 my-2">
-            {dataLabourChart.length > 0 ? (
+          <div className="col-6 my-2">
+            {  typeof activeIndex === "number" && orderMaster.order_design[activeIndex] ? (
               <LabourChartTable
-                data={dataLabourChart}
-                setData={setDataLabourChart}
+                data={orderMaster}
+                setData={setOrderMaster}
+                index={activeIndex}
+                setOrderMaster={setOrderMaster}
               />
             ) : (
               ""
             )}
           </div>
         </div>
-        <div className="p-4 text-end">
+        {/* <div className="p-4 text-end">
           <button
             type="submit"
             className="btn btn-success px-4 fs-10"
@@ -353,11 +369,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
           >
             Submit
           </button>
-        </div>
+        </div> */}
       </div>
     </>
-  ) : (
-    ""
   );
 };
 

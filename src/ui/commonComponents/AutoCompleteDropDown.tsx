@@ -10,7 +10,7 @@ const AutoCompleteDropDown = ({
   // setFormValues,
   fieldName,
   updateStateFunction,
-  defaultValue = "",
+  defaultValue ,
   handleOnSelect,
 }: any) => {
   interface Customer {
@@ -128,14 +128,12 @@ const AutoCompleteDropDown = ({
 
   useEffect(() => {
     const fetch = async () => {
-      console.log({ fieldName });
       const res2 = await window.electron.getFormConfig(`${fieldName}`);
       // const res3 = await window.electron.triggerFunction({
       //   path: res2.autoCompleteFields.order_id.onSelect.fetchFullForm,
       //   inputs: {},
       // });
 
-      console.log(res2, "Fetching");
       setTableData(res2.autoCompleteFields[field.name]);
       setTableHead(res2.autoCompleteFields[field.name].fieldsMap);
     };
@@ -149,18 +147,19 @@ const AutoCompleteDropDown = ({
     isDropdownOpen: any,
     setIsDropdownOpen: any,
     setFilter: any,
-    setFilteredCustomers: any
+    setFilteredCustomers: any,
+    isOnFocus?:boolean
   ) => {
     setIsDropdownOpen(true);
     setFilter(e.target.value);
-    console.log(formValues, "target value");
     const res = await window.electron.getAutoCompleteData({
       formName: fieldName,
       fieldname: field.name,
       value: e.target.value,
     });
-
-    updateStateFunction(e.target.value, field);
+    if (!isOnFocus) {
+      updateStateFunction(e.target.value, field);
+    }
     setFilteredCustomers(res);
   };
 
@@ -174,7 +173,6 @@ const AutoCompleteDropDown = ({
     setIsDropdownOpen(false);
     updateStateFunction(customer[field.name], field);
     setIsDropdownOpen(false);
-    console.log("updateStateFunction called", customer, field);
   };
 
   const handleBlur = (
@@ -191,7 +189,9 @@ const AutoCompleteDropDown = ({
     setIsDropdownOpen(false);
     setFocusedIndex(0);
   };
-
+useEffect(()=>{
+setFilter(defaultValue)
+},[formValues])
   return (
     <div>
       <div className="position-relative">
@@ -209,7 +209,8 @@ const AutoCompleteDropDown = ({
               isDropdownOpen,
               setIsDropdownOpen,
               setFilter,
-              setFilteredCustomers
+              setFilteredCustomers,
+
             )
           }
           onFocus={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,13 +224,12 @@ const AutoCompleteDropDown = ({
               isDropdownOpen,
               setIsDropdownOpen,
               setFilter,
-              setFilteredCustomers
+              setFilteredCustomers,
+              true
             );
           }}
           onBlur={(e) => {
-            console.log("on blur", filteredCustomers);
             setIsDropdownOpen(false);
-
             const filteredValue =
               (filteredCustomers.length > 0 &&
                 filteredCustomers.filter(

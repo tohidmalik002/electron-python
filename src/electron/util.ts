@@ -11,8 +11,6 @@ export function isDev(): boolean {
 export async function getAutoCompleteData(client: any, query: any) {
     const formName = query.formName;
     const config = await getFormConfig(formName)
-    console.log(config.autoCompleteFields)
-    console.log(config.autoCompleteFields[query.fieldname])
     return getData(client, config.autoCompleteFields[query.fieldname], query);
 }
 
@@ -24,7 +22,6 @@ export async function getFormConfig(formName: string) {
 }
 
 async function getData(client: any, queryConfig: any, query: any): Promise<any[]> {
-  console.log("Query Config:", queryConfig, query);
 
   let queryConditions = "";
   const params: any[] = [];
@@ -45,10 +42,8 @@ async function getData(client: any, queryConfig: any, query: any): Promise<any[]
       LIMIT 20;
     `;
 
-    console.log("Generated SQL Query:", sqlQuery);
 
     const result: any = await client.query(sqlQuery, params);
-    console.log("Result:", result.rows);
     return result.rows;
 }
 
@@ -84,7 +79,6 @@ export async function saveFormData(
   parent_id: any = null
 ) {
   let savedFormData = { ...formData };
-  console.log("Saved Form Data:", savedFormData);
    
   if (formData._delete === 1) {
     await deleteData(client, formData, configs);
@@ -162,7 +156,7 @@ async function insertData(client: any, tableName: string, primaryKey: string, en
     VALUES (${placeholders})
     RETURNING ${primaryKey};
   `;
-  console.log(query)
+  console.log(query,values)
   const r = await client.query(query, values);
   return r.rows[0]?.[primaryKey];
 }

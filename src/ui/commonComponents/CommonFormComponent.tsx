@@ -14,9 +14,18 @@ const CommonFormComponent = ({
     [key: string]: string | Date | null | Date | number;
   }
 
+  const operationType = (typeOfOperation: any, value: any) => {
+    if (typeOfOperation === "_is_new" || "_is_updated" || "_is_deleted") {
+      return { [typeOfOperation]: value };
+    }
+  };
+
   const stateUpdater = (name: any, value: any) => {
+    const operationSet = operationType("_is_updated", 1);
+    console.log({ operationSet });
     setOrderMaster((prev: any) => ({
       ...prev,
+      ...operationSet,
       [name]: value,
     }));
   };
@@ -41,12 +50,12 @@ const CommonFormComponent = ({
 
   const updateStateFunction = (value: any, field: any) => {
     let values = { ...orderMaster };
-    console.log(value, field, "value");
     if (field.type === "autoComplete") {
       values = { ...values, [field.name]: Number(value) };
     } else {
       values = { ...values, [field.name]: value };
     }
+
     setOrderMaster((prev: any) => ({
       ...prev,
       ...values,
@@ -54,14 +63,14 @@ const CommonFormComponent = ({
   };
 
   const handleOnSelect = async (data: any, value: any, field: any) => {
-    console.log(data, value, field, "onSelect");
     if (data.onSelect) {
       if (data?.onSelect?.fetchFullForm) {
         const res = await window.electron.triggerFunction({
           path: data.onSelect.fetchFullForm,
           inputs: { value },
         });
-        setOrderMaster({ ...res.data, _is_new: 0 });
+        console.log(res.data, "onSelect.fetchFullForm");
+        setOrderMaster(res.data);
       }
     }
   };
@@ -70,7 +79,7 @@ const CommonFormComponent = ({
     <form>
       <div className="row p-4 g-2">
         {formMainObj?.fields?.map((field: any, index: number) => (
-          <div className="col-md-2" key={index}>
+          <div className="col-md-2" key={index} id="form-group">
             {field.type === "text" && (
               <div className="">
                 <label id={field?.name} className="form-label fs-10">
@@ -79,7 +88,8 @@ const CommonFormComponent = ({
                 <input
                   type="text"
                   className="form-control  fs-10"
-                  value={orderMaster[field?.name] as string}
+                  value={(orderMaster[field?.name] as string) || ""}
+                  name={field?.name}
                   onChange={(e) => handleChange(e, field.name)}
                   placeholder={`Enter ${field.label}`}
                 />

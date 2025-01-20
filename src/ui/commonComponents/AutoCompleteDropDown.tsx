@@ -20,7 +20,7 @@ const AutoCompleteDropDown = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(0);
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState<any>(null);
   const [tableHead, setTableHead] = useState<any>({});
   const [tableData, setTableData] = useState<any>({});
   const [filteredCustomers, setFilteredCustomers] = useState<any[]>([]);
@@ -76,23 +76,17 @@ const AutoCompleteDropDown = ({
     } else if (e.key === "Enter" && focusedIndex !== null) {
       const filteredValue =
         (filteredCustomers.length > 0 &&
-          filteredCustomers.filter(
-            (item) => item[field.name] === Number(filter)
-          )) ||
+          filteredCustomers.filter((item) => item[field.name] === filter)) ||
         [];
+
       if (filteredValue?.length > 0 || !filter) {
         setFilter((prev: any) => prev);
         updateStateFunction(filteredValue[0][field.name], field);
         handleOnSelect(tableData, filteredValue, field.name);
       } else {
-        setFilter(null);
+        setFilter(defaultValue);
       }
-      handleSelectRow(
-        filteredCustomers[focusedIndex],
-        setFilter,
-        setIsDropdownOpen,
-        field
-      );
+      setIsDropdownOpen(false);
     } else if (e.key === "Escape") {
       setIsDropdownOpen(false);
       setFocusedIndex(0);
@@ -185,7 +179,6 @@ const AutoCompleteDropDown = ({
     setFilter(customer[field.name]);
     setIsDropdownOpen(false);
     updateStateFunction(customer[field.name], field);
-    setIsDropdownOpen(false);
   };
 
   const handleBlur = (
@@ -242,14 +235,15 @@ const AutoCompleteDropDown = ({
             );
           }}
           onBlur={(e) => {
+            setFocusedIndex(0);
             setIsDropdownOpen(false);
             const filteredValue =
               (filteredCustomers.length > 0 &&
                 filteredCustomers.filter(
-                  (item) => item[field.name] === Number(filter)
+                  (item) => item[field.name] == filter
                 )) ||
               [];
-            if (filteredValue?.length > 0 || !filter) {
+            if (filteredValue?.length > 0) {
               setFilter((prev: any) => prev);
               updateStateFunction(filteredValue[0][field.name], field);
               handleOnSelect(tableData, filteredValue, field.name);

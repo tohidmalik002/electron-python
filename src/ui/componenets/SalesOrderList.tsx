@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import type { ColDef } from "ag-grid-community";
 
 import {
   AllCommunityModule,
@@ -39,7 +38,7 @@ const SalesOrderList = () => {
           cursor: "pointer",
           textDecoration: "none",
         }}
-        onClick={() => navigate(`order-design-new/${params.value}`)}
+        onClick={() => navigate(`order-design-new?order_id=${params.value}`)}
       >
         {params.value}
       </span>
@@ -62,7 +61,7 @@ const SalesOrderList = () => {
   ];
 
   const handleAddNewOrder = () => {
-    navigate("order-design-new/");
+    navigate("order-design-new");
   };
 
   return (

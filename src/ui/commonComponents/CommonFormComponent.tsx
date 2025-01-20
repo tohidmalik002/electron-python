@@ -63,6 +63,7 @@ const CommonFormComponent = ({
   };
 
   const handleOnSelect = async (data: any, value: any, field: any) => {
+    console.log(data, value, field, "handleOnSelect");
     if (data.onSelect) {
       if (data?.onSelect?.fetchFullForm) {
         const res = await window.electron.triggerFunction({
@@ -142,7 +143,7 @@ const CommonFormComponent = ({
                 <AutoCompleteDropDown
                   field={field}
                   formValues={orderMaster}
-                  defaultValue={orderMaster[field.name]}
+                  defaultValue={orderMaster[field.name] || ""}
                   fieldName={formMainObj.fieldName}
                   updateStateFunction={updateStateFunction}
                   size={"small"}

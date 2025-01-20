@@ -4,6 +4,7 @@ import TableComponent from "../commonComponents/TableComponent";
 import { MdDelete } from "react-icons/md";
 import CommonFormComponent from "../commonComponents/CommonFormComponent";
 import { toast, ToastContainer } from "react-toastify";
+import { useLocation, useParams } from "react-router-dom";
 
 const NewFormPage = () => {
   interface FormValues {
@@ -28,6 +29,8 @@ const NewFormPage = () => {
     prod_setting: string;
     fixed_price: number;
   };
+
+  const location = useLocation();
 
   const handleAddTable = (
     row: any,
@@ -266,22 +269,7 @@ const NewFormPage = () => {
     },
   };
 
-  const initializeFieldValue = (field: (typeof formObj.fields)[number]) => {
-    if (field.type === "calendar") return null;
-    if (field.type === "number") return 0;
-    return null;
-  };
-
-  const initialState: FormValues = formObj.fields.reduce((acc, field) => {
-    acc[field.name] = initializeFieldValue(field);
-    return acc;
-  }, {} as FormValues);
-
-  const [orderMaster, setOrderMaster] = useState<any>({
-    ...initialState,
-    _is_new: 1,
-    order_design: [],
-  });
+  const [orderMaster, setOrderMaster] = useState<any>({});
   const [showModal, setShowModal] = useState(false);
 
   // const handleSubmit = (data: Record<string, any>) => {
@@ -317,6 +305,43 @@ const NewFormPage = () => {
       console.error("Error saving data:", error);
     }
   };
+  const getQueryParams = (query: any) => {
+    const params = new URLSearchParams(query);
+    return params.get("order_id");
+  };
+
+  const order_id: any = getQueryParams(location.search);
+
+  useEffect(() => {
+    const fetchFullForm = "forms.orderMaster.autoCompleteFields.fetchFullForm";
+    const fetch = async () => {
+      if (order_id) {
+        const res = await window.electron.triggerFunction({
+          path: fetchFullForm,
+          inputs: { value: [{ order_id }] },
+        });
+        setOrderMaster(res.data);
+      } else {
+        const initializeFieldValue = (
+          field: (typeof formObj.fields)[number]
+        ) => {
+          if (field.type === "calendar") return null;
+          if (field.type === "number") return 0;
+          return null;
+        };
+        const initialState: FormValues = formObj.fields.reduce((acc, field) => {
+          acc[field.name] = initializeFieldValue(field);
+          return acc;
+        }, {} as FormValues);
+        setOrderMaster({
+          ...initialState,
+          _is_new: 1,
+          order_design: [],
+        });
+      }
+    };
+    fetch();
+  }, []);
 
   return (
     <div className="container-fluid">
@@ -330,14 +355,12 @@ const NewFormPage = () => {
       </div>
       <div className="card shadow">
         <div className="">
-          (
           <TableComponent
             orderId={orderMaster?.order_id as number}
             orderMaster={orderMaster}
             setOrderMaster={setOrderMaster}
             formObj={formObj}
           />
-          )
         </div>
       </div>
 

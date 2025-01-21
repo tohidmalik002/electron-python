@@ -1,18 +1,17 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 import { app } from "electron";
-import { getFormConfigPath } from "./pathResolver.js";
+import {getFormConfigPath} from "./pathResolver.js"
 import { triggerFunction } from "./triggerHandler.js";
+
 
 export function isDev(): boolean {
   return process.env.NODE_ENV === 'development';
 }
 export async function getAutoCompleteData(client: any, query: any) {
-  const formName = query.formName;
-  const config = await getFormConfig(formName);
-  console.log(config.autoCompleteFields);
-  console.log(config.autoCompleteFields[query.fieldname]);
-  return getData(client, config.autoCompleteFields[query.fieldname], query);
+    const formName = query.formName;
+    const config = await getFormConfig(formName)
+    return getData(client, config.autoCompleteFields[query.fieldname], query);
 }
 
 
@@ -22,12 +21,7 @@ export async function getFormConfig(formName: string) {
     return configModule.default
 }
 
-async function getData(
-  client: any,
-  queryConfig: any,
-  query: any
-): Promise<any[]> {
-  console.log("Query Config:", queryConfig, query);
+async function getData(client: any, queryConfig: any, query: any): Promise<any[]> {
 
   let queryConditions = "";
   const params: any[] = [];
@@ -48,11 +42,9 @@ async function getData(
       LIMIT 20;
     `;
 
-  console.log("Generated SQL Query:", sqlQuery);
 
-  const result: any = await client.query(sqlQuery, params);
-  console.log("Result:", result.rows);
-  return result.rows;
+    const result: any = await client.query(sqlQuery, params);
+    return result.rows;
 }
 
 export async function getOrderDesignDetails(client: any, designCode: string) {
@@ -65,21 +57,24 @@ export async function saveForm(client: any, formDataArray: any) {
   let savedData = [];
 
   for (let formData of formDataArray) {
-    const path = `forms.${formData.formName}.main.saveForm`;
-    console.log("func path:", path);
-    const result = await triggerFunction(client, {
-      path,
-      inputs: { configs, formData },
-    });
-    savedData.push(result);
+    // const form = getForm(formData)
+    // form.save(configs)
+    const result = await triggerFunction(client,{path, inputs:{configs,formData}});
+    if(result){
+      savedData.push(result);
+    }
   }
   let x  = {
     status: "success",
     message: "Data saved successfully",
-    data: savedData,
+    data: savedData
   };
   return x
 }
+// export async function getForm(formData: any){
+//   if()
+// }
+
 
 export async function saveFormData(
   client: any,
@@ -89,54 +84,42 @@ export async function saveFormData(
   parent_field: any | null = null,
   parent_id: any = null
 ) {
-  let savedFormData = { ...formData };
-  console.log("Saved Form Data:", savedFormData);
-
-  if (formData._delete === 1) {
+  formData._operationType = await set_operation_type(client, formData, null, null, null)
+  let savedFormData: { [key: string]: any } = {};
+  if (formData._operationType == "delete") {
     await deleteData(client, formData, configs);
-    savedFormData._operation = "DELETE";
   } else {
     const formName = formData.formName;
-    const { tableName, primaryKey } = await getFormConfigDetails(
-      formName,
-      configs
-    );
+    const { tableName,  primaryKey } = await getFormConfigDetails(formName, configs);
     const { entries, arrayEntries } = processFormData(formData);
-    let primaryKeyValue = null;
-    if (
-      entries[primaryKey] &&
-      (await checkIfRecordExists(
-        client,
-        tableName,
-        primaryKey,
-        entries[primaryKey]
-      ))
-    ) {
-      primaryKeyValue = await updateData(
-        client,
-        tableName,
-        primaryKey,
-        entries
-      );
-      savedFormData._operation = "UPDATE";
-    } else {
+    let primaryKeyValue = entries[primaryKey];
+    formData._operationType = await set_operation_type(client, formData,tableName,primaryKey, primaryKeyValue)
+    if(formData._operationType == "insert"){
       if (parent_type && parent_field && parent_id) {
         entries["parent_type"] = parent_type;
         entries["parent_field"] = parent_field;
         entries["parent_id"] = parent_id;
       }
-      primaryKeyValue = await insertData(client, tableName, primaryKey, entries);
-      savedFormData._operation = 'INSERT';
+      savedFormData = await insertData(client, tableName, primaryKey, entries);
+      primaryKeyValue = savedFormData[primaryKey]
+      savedFormData._operation = 'insert';
     }
-
-    // Add the primary key to the response
-    savedFormData[primaryKey] = primaryKeyValue;
-    savedFormData._tableName = tableName;
+    else if (formData._operationType == "update" ){
+      savedFormData = await updateData(client, tableName, primaryKey, entries);
+      savedFormData._operation = 'update';
+      primaryKeyValue = savedFormData[primaryKey]
+    }
+    if(!savedFormData){
+      savedFormData = formData.copy()
+    }
 
     // Process nested arrays
     for (let [arrayKey, arrayValue] of Object.entries(arrayEntries)) {
       savedFormData[arrayKey] = [];
       for (let element of arrayValue) {
+        if (formData._operationType == "insert"){
+          element._is_new = 1
+        }
         const childResult = await saveFormData(
           client,
           element,
@@ -145,13 +128,30 @@ export async function saveFormData(
           arrayKey,
           primaryKeyValue
         );
-        savedFormData[arrayKey].push(childResult);
+        if(childResult){
+          savedFormData[arrayKey].push(childResult);
+        }
       }
     }
   }
 
   return savedFormData;
 }
+
+export async function set_operation_type(client:any, formData: any ,tableName: any | null, primaryKey: any | null, primaryKeyValue: any | null): Promise<"delete" | "insert" | "update" | null>{
+  if(formData._is_deleted == 1){
+    return "delete"
+  }
+  else if(formData._is_new || !primaryKeyValue){
+    return "insert"
+  }
+  else if(formData._is_update && primaryKeyValue){
+    return "update"
+
+  }
+  return null
+}
+
 
 const non_included_fields_from_form = [
   "parent_type", 
@@ -182,11 +182,12 @@ async function insertData(client: any, tableName: string, primaryKey: string, en
   let query = `
     INSERT INTO ${tableName} (${columns.join(", ")})
     VALUES (${placeholders})
-    RETURNING ${primaryKey};
+    RETURNING *;
   `;
-  console.log(query);
+  console.log(query,values)
   const r = await client.query(query, values);
-  return r.rows[0]?.[primaryKey];
+  console.log(r.rows)
+  return r.rows[0];
 }
 
 async function updateData(client: any, tableName: string, primaryKey: string, entries: any) {
@@ -197,61 +198,55 @@ async function updateData(client: any, tableName: string, primaryKey: string, en
     .map((key, index) => `${key} = $${index + 1}`)
     .join(", ");
   const values = Object.values(entries);
-
-  // Append the primary key value at the end of the values array
   values.push(primaryKeyValue);
-
   const query = `
     UPDATE ${tableName}
     SET ${setClauses}
     WHERE ${primaryKey} = $${values.length};
   `;
-
-  const result = await client.query(query, values);
-  return primaryKeyValue; 
+  await client.query(query, values);
+  const selectQuery = `
+    SELECT * FROM ${tableName}
+    WHERE ${primaryKey} = $1;
+  `;
+  const result = await client.query(selectQuery, [primaryKeyValue]);
+  return result.rows[0];
 }
 
-async function deleteData(client: any, formData: any, configs: any) {
+async function deleteData( client:any, 
+  formData:any, 
+  configs:any, 
+){
   const { entries, arrayEntries } = processFormData(formData);
-  const { tableName, primaryKey } = await getFormConfigDetails(
-    formData.formName,
-    configs
-  );
+  const { tableName,  primaryKey } = await getFormConfigDetails(formData.formName, configs);
   const primaryKeyValue = entries[primaryKey];
-  if (
-    primaryKeyValue &&
-    (await checkIfRecordExists(client, tableName, primaryKey, primaryKeyValue))
-  ) {
+  if  (primaryKeyValue && await checkIfRecordExists(client, tableName, primaryKey, primaryKeyValue)){
     for (let [arrayKey, arrayValue] of Object.entries(arrayEntries)) {
       for (let element of arrayValue) {
         await deleteData(client, element, configs);
       }
     }
-
+  
     const query = `
       DELETE FROM ${tableName}
       WHERE ${primaryKey} = $1;
       `;
     await client.query(query, [primaryKeyValue]);
+
   }
 }
 
 export async function getFormConfigDetails(formName: string, configs: any) {
-  let config = configs[formName] || (await getFormConfig(formName));
+  let config = configs[formName] || await getFormConfig(formName);
   if (!configs[formName]) {
-    configs[formName] = config;
+      configs[formName] = config;
   }
   const tableName = config.tableName;
   const primaryKey = config.primary_key || "id";
   return { tableName, primaryKey };
 }
 
-async function checkIfRecordExists(
-  client: any,
-  tableName: string,
-  primaryKey: string,
-  primaryKeyValue: any
-): Promise<boolean> {
+async function checkIfRecordExists(client: any, tableName: string, primaryKey: string, primaryKeyValue: any): Promise<boolean> {
   // Query to check if the record exists
   const query = `
     SELECT COUNT(*) AS count 
@@ -260,6 +255,5 @@ async function checkIfRecordExists(
   `;
   const result = await client.query(query, [primaryKeyValue]);
 
-  // If count > 0, record exists
-  return result.rows[0].count > 0;
+  return result.rows[0].count > 0 ? true : false;
 }

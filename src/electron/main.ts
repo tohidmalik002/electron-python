@@ -5,7 +5,8 @@ import {
   getFormConfig,
   getOrderDesignDetails,
   saveForm,
-  getListView
+  getListView,
+  deleteForm
 } from "./util.js";
 import { triggerFunction } from "./triggerHandler.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
@@ -63,6 +64,11 @@ app.on("ready", () => {
       return await saveForm(client,kwargs);
     });
    
+  });
+  ipcMain.handle("deleteForm",async (_, kwargs: any) => {
+    return await performTransaction("write", async (client) => {
+      return await deleteForm(client,kwargs);
+    });
   });
 
   handleCloseEvents(mainWindow);

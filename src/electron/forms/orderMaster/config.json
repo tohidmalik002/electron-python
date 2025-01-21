@@ -2,6 +2,7 @@
   "tableName": "order_master",
   "formName": "orderMaster",
   "primary_key": "order_id",
+  "fetchFullForm": "forms.orderMaster.autoCompleteFields.fetchFullForm",
   "autoCompleteFields": {
     "customer_id": {
       "table": "Customers",
@@ -39,7 +40,7 @@
         "priority": "Priority"
       },
       "primaryField": "order_id",
-      "onSelect":{
+      "onSelect": {
         "fetchFullForm": "forms.orderMaster.autoCompleteFields.fetchFullForm"
       }
     }

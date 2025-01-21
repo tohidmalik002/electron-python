@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import { MdDelete } from "react-icons/md";
 
 import {
   AllCommunityModule,
@@ -30,6 +31,21 @@ const SalesOrderList = () => {
     flex: 1,
   };
 
+  const handleDelete = async (orderId: any) => {
+    try {
+      const res = await window.electron.deleteForm({
+        formName: "orderMaster",
+        order_id: 666,
+      });
+      console.log("Deleted order:", res);
+      // setOrderList((prevOrderList) =>
+      //   prevOrderList.filter((order) => order.order_id !== orderId)
+      // );
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  };
+
   const orderIdCellRenderer = (params: any) => {
     return (
       <span
@@ -41,6 +57,19 @@ const SalesOrderList = () => {
         onClick={() => navigate(`order-design-new?order_id=${params.value}`)}
       >
         {params.value}
+      </span>
+    );
+  };
+
+  const deleteCellRenderer = (params: any) => {
+    return (
+      <span
+        onClick={() => handleDelete(params.data.order_id)}
+        className="text-center"
+      >
+        <div className="text-danger">
+          <MdDelete />
+        </div>
       </span>
     );
   };
@@ -58,6 +87,11 @@ const SalesOrderList = () => {
     { headerName: "PO Date", field: "po_date" },
     { headerName: "Priority", field: "priority" },
     { headerName: "Currency", field: "currency" },
+    {
+      headerName: "Actions",
+      field: "actions",
+      cellRenderer: deleteCellRenderer,
+    },
   ];
 
   const handleAddNewOrder = () => {

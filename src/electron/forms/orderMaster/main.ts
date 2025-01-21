@@ -1,39 +1,36 @@
-import { saveFormData } from '../../util.js';
+import { saveFormData } from "../../util.js";
 
-export async function saveForm(client:any,kwargs: any) {
-    console.log(kwargs)
-    const {configs, formData} = kwargs;
-    if (kwargs._delete === 1) {
-        await beforeDelete()
-    }
-    else{
-        await validate()
-        await beforeSave()
-    }
-    let result = await saveFormData(client, formData, configs);
-    if (kwargs._delete === 1) {
-        await afterDelete()
-    }
-    else{
-        await afterSave()
-    }
-    return result;
+export async function saveForm(client: any, kwargs: any) {
+  const { configs, formData } = kwargs;
+  if (kwargs._delete === 1) {
+    await beforeDelete();
+  } else {
+    await validate();
+    await beforeSave();
+  }
+  let result = await saveFormData(client, formData, configs);
+  if (kwargs._delete === 1) {
+    await afterDelete();
+  } else {
+    await afterSave();
+  }
+  return result;
 }
 
 async function validate() {
-    console.log("Validate")
+  console.log("Validate");
 }
 
 async function beforeSave() {
-    console.log("Before Save")
+  console.log("Before Save");
 }
 async function afterSave() {
-    console.log("After Save")
+  console.log("After Save");
 }
 async function beforeDelete() {
-    console.log("Before Delete")
+  console.log("Before Delete");
 }
 
 async function afterDelete() {
-    console.log("After Delete")
+  console.log("After Delete");
 }

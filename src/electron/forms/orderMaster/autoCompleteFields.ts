@@ -1,4 +1,5 @@
 export async function fetchFullForm(client: any, kwargs: any) {
+  console.log("Fetching form data:", kwargs);
   const query = `
         SELECT 
             om.*,
@@ -48,6 +49,7 @@ export async function fetchFullForm(client: any, kwargs: any) {
 
   try {
     const r = await client.query(query, [kwargs.value[0].order_id]);
+    console.log("Fetched form data00000000000000000:", r.rows[0]);
     return r.rows[0];
   } catch (error) {
     console.error("Error fetching data:", error);

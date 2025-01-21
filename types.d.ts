@@ -15,6 +15,7 @@ interface Window {
     insertFormData:any;
     getOrderDesignDetails:any;
     triggerFunction:any;
+    deleteForm:any
     saveForm:any;
     listview:any;
   };

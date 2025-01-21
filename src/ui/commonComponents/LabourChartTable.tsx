@@ -14,7 +14,7 @@ const LabourChartTable: React.FC<LabourChartTableProps> = ({
   setOrderMaster,
 }) => {
   const fields = [
-    "_order_design_id",
+    "parent_id",
     "main_cd",
     "sub_cd",
     "by_qw",
@@ -54,7 +54,7 @@ const LabourChartTable: React.FC<LabourChartTableProps> = ({
   };
 
   const initialDataLabourChart = {
-    _order_design_id: null,
+    parent_id: null,
     maind_cd: "",
     sub_cd: "",
     by_qw: 0,

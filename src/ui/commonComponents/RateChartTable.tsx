@@ -13,7 +13,7 @@ const RateChartTable: React.FC<RateChartTableProps> = ({
   index,
 }) => {
   const fields = [
-    "_order_design_id",
+    "parent_id",
     "category",
     "sub_category",
     "sv_ln",
@@ -72,7 +72,7 @@ const RateChartTable: React.FC<RateChartTableProps> = ({
   };
 
   const initailDataRateChart = {
-    _order_design_id: null,
+    parent_id: null,
     category: "",
     sub_category: "",
     sv_ln: "",

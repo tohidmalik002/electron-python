@@ -38,7 +38,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   const orderLabourField = "orderLabourChart";
 
   const initialDataLabourChart = {
-    _order_design_id: null,
+    parent_id: null,
     maind_cd: "",
     sub_cd: "",
     by_qw: 0,
@@ -106,7 +106,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   };
 
   const initailDataRateChart = {
-    _order_design_id: null,
+    parent_id: null,
     category: "",
     sub_category: "",
     sv_ln: "",

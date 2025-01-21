@@ -98,6 +98,7 @@ export async function deleteForm(client: any, formData: any) {
   formData = await triggerFunction(client, {
     path: config["fetchFullForm"],
   inputs: { value: [{ [primary_key]: primaryKeyValue }] },  });
+  formData = formData.data;
   formData._is_deleted = 1;
   await deleteData(client, formData, configs);
   return "success";
@@ -272,6 +273,7 @@ async function updateData(
 }
 
 async function deleteData(client: any, formData: any, configs: any) {
+  console.log(formData, "deleteData");
   const { entries, arrayEntries } = processFormData(formData);
   const { tableName, primaryKey } = await getFormConfigDetails(
     formData.formName,

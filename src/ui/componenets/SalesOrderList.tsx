@@ -35,7 +35,7 @@ const SalesOrderList = () => {
     try {
       const res = await window.electron.deleteForm({
         formName: "orderMaster",
-        order_id: 666,
+        order_id: orderId,
       });
       console.log("Deleted order:", res);
       // setOrderList((prevOrderList) =>

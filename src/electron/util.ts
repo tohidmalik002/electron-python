@@ -1,7 +1,4 @@
-import * as path from "path";
-import { promises as fs } from "fs";
-import { app } from "electron";
-import {getFormConfigPath} from "./pathResolver.js"
+import { getFormConfigPath ,getListViewPath} from "./pathResolver.js";
 import { triggerFunction } from "./triggerHandler.js";
 
 
@@ -9,9 +6,9 @@ export function isDev(): boolean {
   return process.env.NODE_ENV === 'development';
 }
 export async function getAutoCompleteData(client: any, query: any) {
-    const formName = query.formName;
-    const config = await getFormConfig(formName)
-    return getData(client, config.autoCompleteFields[query.fieldname], query);
+  const formName = query.formName;
+  const config = await getFormConfig(formName);
+  return getData(client, config.autoCompleteFields[query.fieldname], query);
 }
 
 
@@ -21,7 +18,11 @@ export async function getFormConfig(formName: string) {
     return configModule.default
 }
 
-async function getData(client: any, queryConfig: any, query: any): Promise<any[]> {
+async function getData(
+  client: any,
+  queryConfig: any,
+  query: any
+): Promise<any[]> {
 
   let queryConditions = "";
   const params: any[] = [];
@@ -43,8 +44,8 @@ async function getData(client: any, queryConfig: any, query: any): Promise<any[]
     `;
 
 
-    const result: any = await client.query(sqlQuery, params);
-    return result.rows;
+  const result: any = await client.query(sqlQuery, params);
+  return result.rows;
 }
 
 export async function getOrderDesignDetails(client: any, designCode: string) {
@@ -59,6 +60,7 @@ export async function saveForm(client: any, formDataArray: any) {
   for (let formData of formDataArray) {
     // const form = getForm(formData)
     // form.save(configs)
+    const path = `forms.${formData.formName}.main.saveForm`;
     const result = await triggerFunction(client,{path, inputs:{configs,formData}});
     if(result){
       savedData.push(result);
@@ -256,4 +258,29 @@ async function checkIfRecordExists(client: any, tableName: string, primaryKey: s
   const result = await client.query(query, [primaryKeyValue]);
 
   return result.rows[0].count > 0 ? true : false;
+}
+
+export async function getListView(client: any, kwargs: any) {
+  let formName = kwargs.formName;
+  let filters = kwargs.filters || {};
+  
+  // Example filter object
+  // filters = { "order_id": 1, "customer_id": 2 };
+
+  const configpath = await getListViewPath(formName);
+  const configModule = await import(configpath, { with: { type: "json" } });
+  let listViewConfig = configModule.default;
+
+  let query = `SELECT ${listViewConfig.columns} FROM ${listViewConfig.table}`;
+
+  // If filters exist, format them for SQL query using LIKE
+  if (Object.keys(filters).length > 0) {
+    const filterConditions = Object.entries(filters)
+      .map(([key, value]) => `${key}::text LIKE '%${value}%'`) // Using LIKE operator for partial match
+      .join(' AND ');
+
+    query += ` WHERE ${filterConditions}`;
+  }
+  const result = await client.query(query);
+  return result.rows;
 }

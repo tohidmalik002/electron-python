@@ -4,7 +4,7 @@ import {
   isDev,
   getFormConfig,
   getOrderDesignDetails,
-  saveForm,
+  saveForm as saveFormUtil,
   getListView,
   deleteForm
 } from "./util.js";
@@ -12,14 +12,15 @@ import { triggerFunction } from "./triggerHandler.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { ipcMain } from "electron";
 import { performTransaction } from "./db.js";
+import { saveModel } from "./models/utils.js";
+import {init_models} from "./models/database.js";
 
-
-app.on("ready", () => {
+app.on("ready", async () => {
+  init_models();
   const mainWindow = new BrowserWindow({
     webPreferences: {
       preload: getPreloadPath(),
     },
-    // disables default system frame (dont do this if you want a proper working menu bar)
     frame: true,
   });
   if (isDev()) {
@@ -58,13 +59,18 @@ app.on("ready", () => {
     });
    
   });
-  ipcMain.handle("saveForm",async (_, kwargs: any) => {
-   console.log("saveForm",kwargs);
-    return await performTransaction("write", async (client) => {
-      return await saveForm(client,kwargs);
-    });
-   
+
+  ipcMain.handle("saveForm", async (_, kwargs: any) => {
+    console.log("saveForm", kwargs);
+    try {
+      await saveModel(kwargs[0]);
+      return "ok";
+    } catch (error) {
+      console.error('Error saving order and designs:', error);
+      throw error;
+    }
   });
+
   ipcMain.handle("deleteForm",async (_, kwargs: any) => {
     return await performTransaction("write", async (client) => {
       return await deleteForm(client,kwargs);

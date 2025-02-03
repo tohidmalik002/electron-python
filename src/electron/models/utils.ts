@@ -17,37 +17,59 @@ export async function loadModel(modelName: any) {
     }
 }
 
-export async function getModelObj(modelName: any = null, data: any = null) {
-    const orderMaster = await loadModel("orderMaster");
+export async function saveModel(kwargs: any) {
+    const obj: any = await getModelObj(kwargs.formName, kwargs);
+    console.log(obj.toJSON(), "obj0000000000000000")
+
+}
+
+
+export async function getModelObj(modelName: any = null, data: any = {}) {
+    const model = await loadModel(modelName);
+    const obj = await model.getFullObj(data[model.primaryKeyAttribute], data);
+    return obj;
+    // if (data[model.primaryKeyAttribute]) {
+    //     return await model.getFullObj(data);
+    // }
+    // else{
+    //     return model.buildModel(data);
+    // }
+
     // orderMaster.getFullData(1);
     // orderMaster.addHook('beforeFind', (options: any) => {
     //     console.log(options, "beforeFind")
     // });
-    const orderDesign = await loadModel("orderDesign");
-    const orderRateChart = await loadModel("orderRateChart");
+    // const orderDesign = await loadModel("orderDesign");
+    // const orderRateChart = await loadModel("orderRateChart");
+    // doc = orderMaster.updateObj(data)
+    // doc.saveObj()
+
+    // doc = orderMaster.getFullObj(777, data)
+    // doc.saveObj()
 
 
-
-    const doc = await orderMaster.findByPk(777,{
-        include: [
-          {
-            model: orderDesign,
-            as: 'order_design',
-            duplicating: false,
-            on: sequelize.literal('"orderMaster"."order_id"::TEXT = "order_design"."parent_id"'),
-            include:[
-              {
-                model: orderRateChart,
-                as: 'rate_chart',
-                duplicating: false,
-                on: sequelize.literal('"order_design"."order_design_id"::TEXT = "order_design->rate_chart"."parent_id"'),
-              }
-            ]
+    // doc.update_obj(data)
+    // doc.saveObj()
+    // const doc = await orderMaster.findByPk(777,{
+    //     include: [
+    //       {
+    //         model: orderDesign,
+    //         as: 'order_design',
+    //         duplicating: false,
+    //         on: sequelize.literal('"orderMaster"."order_id"::TEXT = "order_design"."parent_id"'),
+    //         include:[
+    //           {
+    //             model: orderRateChart,
+    //             as: 'rate_chart',
+    //             duplicating: false,
+    //             on: sequelize.literal('"order_design"."order_design_id"::TEXT = "order_design->rate_chart"."parent_id"'),
+    //           }
+    //         ]
           
-          }
-        ]
-      });
-    console.log(doc, "doc")
+    //       }
+    //     ]
+    //   });
+    // console.log(doc, "doc")
 
     //   doc.save()
     // // console.log(data instanceof orderMaster, "data")

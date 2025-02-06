@@ -1,6 +1,0 @@
-{
-  "tableName": "order_rate_chart",
-  "formName": "orderRateChart",
-  "parent_id": "order_design_id"
-}
-

@@ -1,14 +1,6 @@
 const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electron", {
-  getAutoCompleteData: (query: any) => ipcInvoke("getAutoCompleteData", query),
-  listview: (args: any) => ipcInvoke("listview", args),
-  getFormConfig: (formName: any) => ipcInvoke("getFormConfig", formName),
-  getOrderDesignDetails: (designCode: string) =>
-    ipcInvoke("getOrderDesignDetails", designCode),
-  triggerFunction: (kwargs: any) => ipcInvoke("triggerFunction", kwargs),
-  saveForm: (kwargs: any) => ipcInvoke("saveForm", kwargs),
-  deleteForm: (kwargs: any) => ipcInvoke("deleteForm", kwargs),
   runPython: (kwargs: any) => ipcInvoke("runPython", kwargs),
 
 });

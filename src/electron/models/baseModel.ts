@@ -16,10 +16,10 @@ class BaseModel extends Model {
 
       return obj;
     };
-    static async saveObj(data: any) {
-      const obj = await this.create(data);
-      return obj;
+    static async saveObj() {
+      console.log(this,"saveObj")
     };
+    
     static beforeCreateHook?(instance: BaseModel, options:any): void;
     static beforeUpdateHook?(instance: BaseModel): void;
   }

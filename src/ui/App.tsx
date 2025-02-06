@@ -1,36 +1,20 @@
+import { useState } from "react";
 import "./App.css";
-import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
-import NewFormPage from "./componenets/NewFormPage";
-import CustomerForm from "./componenets/CustomerForm";
-import SalesOrderList from "./componenets/SalesOrderList";
-import Layout from "./componenets/Layout";
+
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          path: "/",
-          Component: SalesOrderList,
-        },
-        {
-          path: "order-design-new/",
-          Component: NewFormPage,
-        },
-        {
-          path: "/customer-form",
-          Component: CustomerForm,
-        },
-      ],
-    },
-  ]);
+  const [text,setText] = useState("")
+const runPyScript =async () => {
+  const output = await window.electron.runPython();
+  console.log(output)
+}
 
   return (
-    <div className="App">
-      <RouterProvider router={router} />
-    </div>
+   <>
+    <h1>Run Python from Electron</h1>
+    <button id="runPython" onClick={runPyScript}>Run Python Script</button>
+    <p id="output">{text}</p> 
+   </>
   );
 }
 

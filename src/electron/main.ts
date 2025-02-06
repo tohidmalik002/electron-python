@@ -1,4 +1,6 @@
 import { app, BrowserWindow } from "electron";
+import { spawn } from "child_process";
+import path from "path";
 import {
   getAutoCompleteData,
   isDev,
@@ -81,6 +83,29 @@ app.on("ready", async () => {
   // createMenu(mainWindow);
 });
 
+ipcMain.handle("runPython", async (_event, arg) => {
+  return new Promise((resolve, reject) => {
+      console.log(app.getPath('exe'))
+      const user_path = app.getPath('exe').split('\\')
+      console.log(user_path[0], user_path[1], user_path[2], "path")
+      const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
+      console.log(script_path, "script path")
+      const pythonProcess = spawn("python", [script_path]);
+      let output = app.getPath('exe');
+
+      pythonProcess.stdout.on("data", (data) => {
+          output += data.toString();
+      });
+
+      pythonProcess.stderr.on("data", (data) => {
+          reject(`Error: ${data.toString()}`);
+      });
+
+      pythonProcess.on("close", () => {
+          resolve(output.trim());
+      });
+  });
+});
 function handleCloseEvents(mainWindow: BrowserWindow) {
   let willClose = false;
 

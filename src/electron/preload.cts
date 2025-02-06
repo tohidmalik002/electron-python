@@ -9,6 +9,8 @@ electron.contextBridge.exposeInMainWorld("electron", {
   triggerFunction: (kwargs: any) => ipcInvoke("triggerFunction", kwargs),
   saveForm: (kwargs: any) => ipcInvoke("saveForm", kwargs),
   deleteForm: (kwargs: any) => ipcInvoke("deleteForm", kwargs),
+  runPython: (kwargs: any) => ipcInvoke("runPython", kwargs),
+
 });
 
 function ipcInvoke<Key extends string>(key: Key, args?: any): Promise<any> {

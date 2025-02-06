@@ -19,10 +19,12 @@ export async function loadModel(modelName: any) {
 
 export async function saveModel(kwargs: any) {
     const obj: any = await getModelObj(kwargs.formName, kwargs);
-    console.log(obj.toJSON(), "obj0000000000000000")
-
+    if (obj && typeof obj.saveObj === 'function') {
+        await obj.saveObj();
+    } else {
+        console.error("saveObj method is not available on the object.");
+    }
 }
-
 
 export async function getModelObj(modelName: any = null, data: any = {}) {
     const model = await loadModel(modelName);
@@ -202,6 +204,9 @@ export async function saveFormData(data: any) {
     // return instance;
 }
 
+
+
+
 export async function saveObj(data: any) {
     data = {
         voucher_part1: "test",
@@ -301,5 +306,10 @@ export async function saveObj(data: any) {
         // console.log("saveObj", result);
 
         // return result;
+
+}
+
+export async function generatePDF(data: any) {
+    
 
 }

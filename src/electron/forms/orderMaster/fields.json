@@ -1,0 +1,395 @@
+{
+    "main": {
+      "fields": [
+        {
+            "label": "Voucher 1",
+            "name": "voucher_part1",
+            "type": "text",
+            "table": "order_master",
+            "show": true,
+            "disabled": false
+        },
+        {
+            "label": "Voucher 2",
+            "name": "voucher_part2",
+            "type": "text",
+            "show": true,
+            "disabled": false
+        },
+        {
+            "label": "Voucher 3 ",
+            "name": "voucher_part3",
+            "type": "text",
+            "show": true,
+            "disabled": false
+        },
+        {
+            "label": "Voucher 4",
+            "name": "order_id",
+            "type": "autoComplete"
+        },
+        {
+            "label": "Date",
+            "name": "order_date",
+            "type": "calendar",
+            "table": "order_master_item"
+        },
+        { 
+            "label": "Currency", 
+            "name": "currency", 
+            "type": "text" 
+        },
+        {
+            "label": "Customer ID",
+            "name": "customer_id",
+            "type": "autoComplete"
+        },
+        {
+            "label": "Customer Name",
+            "name": "customer_name",
+            "type": "text",
+            "table": "rate_charts"
+        },
+        { 
+            "label": "Conversion Factor", 
+            "name": "conv_fact", 
+            "type": "text" 
+        },
+        { 
+            "label": "Conversion Date", 
+            "name": "conv_d", 
+            "type": "calendar" 
+        },
+        { 
+            "label": "LMG Sales", 
+            "name": "lmg_sales", 
+            "type": "number" 
+        },
+        { 
+            "label": "LMP Sales", 
+            "name": "lmp_sales", 
+            "type": "number" 
+        },
+        { 
+            "label": "LMS Sales", 
+            "name": "lms_sales", 
+            "type": "number" 
+        },
+        { 
+            "label": "LML Sales", 
+            "name": "lml_sales", 
+            "type": "number" 
+        },
+        { 
+            "label": "CHI X KT", 
+            "name": "chi_x_kt", 
+            "type": "text" 
+        },
+        { 
+            "label": "PO Number", 
+            "name": "po_no", 
+            "type": "text" 
+        },
+        { 
+            "label": "PO Date", 
+            "name": "po_date", 
+            "type": "calendar" 
+        },
+        { 
+            "label": "Priority", 
+            "name": "priority", 
+            "type": "text" 
+        },
+        { 
+            "label": "EXP Delivery Date", 
+            "name": "exp_del_date", 
+            "type": "calendar" 
+        },
+        {
+            "label": "Product Delivery Date",
+            "name": "prod_del_date",
+            "type": "calendar"
+        },
+        { 
+            "label": "Order Lock", 
+            "name": "ord_lock", 
+            "type": "text" 
+        },
+        { 
+            "label": "Password", 
+            "name": "pwd", 
+            "type": "text" 
+        },
+        { 
+            "label": "LK Sales Price", 
+            "name": "lk_sales_price", 
+            "type": "number" 
+        },
+        { 
+            "label": "Refresh Date", 
+            "name": "refresh_date", 
+            "type": "calendar" 
+        },
+        { 
+            "label": "Order Deesign",
+            "name": "order_design",
+            "type": "table",
+            "add_row": true,
+            "formName": "orderDesign"
+        },
+        { 
+            "label": "Rate Chart",
+            "name": "rate_chart",
+            "type": "table",
+            "add_row": true,
+            "formName": "orderRateChart",
+            "parentfield": "order_design"
+        }
+      ],
+      "formName": "OrderMaster"
+    },
+    "childForms": {
+        "orderDesign": {
+            "fields": [
+                {
+                    "label": "Order ID",
+                    "name": "parent_id",
+                    "type": "text",
+                    "show": false,
+                    "disabled": true
+                },
+                {
+                    "label": "Design Code",
+                    "value": "design_code",
+                    "type": "autoComplete",
+                    "show": true
+                },
+                { 
+                    "label": "Suffix",
+                    "name": "suffix", 
+                    "type": "text", 
+                    "show": true 
+                },
+                { 
+                    "label": "Size", 
+                    "name": "size", 
+                    "type": "text", 
+                    "show": true 
+                },
+                { 
+                    "label": "Quantity", 
+                    "name": "qty", 
+                    "type": "number",
+                    "show": true 
+                },
+                {
+                    "label": "Calculated Price",
+                    "name": "calc_price",
+                    "type": "number",
+                    "show": true
+                },
+                {
+                    "label": "Sales Price",
+                    "name": "sales_price",
+                    "type": "number",
+                    "show": true
+                },
+                {
+                    "label": "Prod Delivery Date",
+                    "name": "prod_dely_date",
+                    "type": "date",
+                    "show": true
+                },
+                {
+                    "label": "Expected Delivery Date",
+                    "name": "exp_dely_date",
+                    "type": "date",
+                    "show": true
+                },
+                {
+                    "label": "Prod Setting",
+                    "name": "prod_setting",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Fixed Price",
+                    "name": "fixed_price",
+                    "type": "number",
+                    "show": true
+                },
+                {
+                    "label": "Add Child",
+                    "name": "_add_child",
+                    "type": "button",
+                    "show": true,
+                    "events": [
+                        {
+                            "action": "onClick", 
+                            "function_name": "handleSubmit",
+                            "event_type": "inline"
+                        }
+                    ]
+                },
+                {
+                    "label": "",
+                    "name": "formName",
+                    "type": "text",
+                    "show": false
+                }
+            ],
+            "formName": "orderDesign"
+        },
+        "orderRateChart":{
+            "fields":[
+                {
+                    "label": "",
+                    "name": "_order_design_id",
+                    "type": "text",
+                    "show": false,
+                    "disabled": true
+                },
+                {
+                    "label": "Category",
+                    "value": "category",
+                    "type": "text",
+                    "show": true
+                },
+                { 
+                    "label": "Sub Category",
+                    "name": "sub_category", 
+                    "type": "text",
+                    "show": true
+                },
+                { 
+                    "label": "Sv Ln", 
+                    "name": "sv_ln", 
+                    "type": "text", 
+                    "show": true 
+                },
+                { 
+                    "label": "Breadth", 
+                    "name": "breadth", 
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Depth",
+                    "name": "depth",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Quantity",
+                    "name": "quantity",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Pm Pointer",
+                    "name": "pm_pointer",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Wt",
+                    "name": "wt",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Lme Rate",
+                    "name": "lme_rate",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Sales Rate",
+                    "name": "sales_rate",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Qw",
+                    "name": "qw",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Sales Value",
+                    "value": "sales_value",
+                    "type": "text",
+                    "show": true
+                },
+                { 
+                    "label": "Production Quantity",
+                    "name": "production_quantity", 
+                    "type": "text",
+                    "show": true
+                },
+                { 
+                    "label": "Production Weight", 
+                    "name": "production_weight", 
+                    "type": "text",
+                    "show": true
+                },
+                { 
+                    "label": "Setting", 
+                    "name": "setting", 
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Setting Rate",
+                    "name": "setting_rate",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Setting Value",
+                    "name": "setting_value",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Alloy",
+                    "name": "alloy",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "alloy_rate",
+                    "name": "Alloy Rate",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "wset",
+                    "name": "Wset",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "H_set",
+                    "name": "h_set",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "Sshp",
+                    "name": "sshp",
+                    "type": "text",
+                    "show": true
+                },
+                {
+                    "label": "M material",
+                    "name": "m_material",
+                    "type": "text",
+                    "show": true
+                }
+            ],
+            "formName": "orderRateChart"
+        }
+    }
+  }
+  

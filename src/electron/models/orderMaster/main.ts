@@ -46,11 +46,7 @@ class orderMaster extends BaseModel {
   };
 
 }
-// orderMaster.addHook('beforeFind', (options) => {
-//   console.log(options, "beforeFind")
-// });
 
-// createModel(orderMaster, modelConfig.attributes, modelConfig.options, modelConfig.relationships);
 export default orderMaster;
 
 
@@ -71,6 +67,14 @@ export default orderMaster;
 //         console.log('Database & tables updated!');
 //       } catch (error) {
 //         console.error('Error syncing database:', error);
+//       }
+//     }
+//   }
+  
+//       }
+//     }
+//   }
+  
 //       }
 //     }
 //   }

@@ -18,5 +18,6 @@ interface Window {
     deleteForm:any
     saveForm:any;
     listview:any;
+    runPython:any;
   };
 }

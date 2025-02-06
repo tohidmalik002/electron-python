@@ -6,7 +6,7 @@ function App() {
   const [text,setText] = useState("")
 const runPyScript =async () => {
   const output = await window.electron.runPython();
-  console.log(output)
+  setText(output)
 }
 
   return (

@@ -1,6 +1,0 @@
-{
-  "tableName": "order_labour_chart",
-  "formName": "orderLabourChart",
-  "parent_id": "order_design_id"
-}
-

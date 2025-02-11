@@ -1,93 +1,39 @@
-/* App.css */
-body {
-  margin: 0;
-  padding: 20px;
-  background-color: #fff;
-  font-family: Arial, sans-serif;
+header {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  -webkit-app-region: drag;
 }
 
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 30px;
+header button {
+  all: unset;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.25rem;
+  -webkit-app-region: no-drag;
 }
 
-h1 {
-  color: #333;
-  margin-bottom: 35px;
-  font-size: 28px;
+#close {
+  background-color: red;
 }
 
-.form-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 18px;
+#minimize {
+  background-color: yellow;
 }
 
-.form-label {
-  width: 120px;
-  font-weight: normal;
-  color: #333;
+#maximize {
+  background-color: lime;
 }
 
-.form-input {
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  margin-right: 15px;
-  width: 180px;
+.mainGrid {
+  height: 10rem;
+  padding: 0.5rem;
 }
 
-.date-input {
-  width: 140px;
+.fs-10 {
+  font-size: 10px;
 }
-
-/* Radio and Checkbox styles */
-.radio-section {
-  margin: 25px 0;
-}
-
-.radio-group {
-  display: flex;
-  gap: 30px;
-  margin-left: 120px;
-}
-
-.radio-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.options-section {
-  margin-top: 25px;
-}
-
-.checkbox-group {
-  display: flex;
-  gap: 20px;
-  margin-left: 120px;
-}
-
-/* Specific field spacings */
-.vch-date {
-  margin-bottom: 25px;
-}
-
-.vch-option {
-  margin-bottom: 30px;
-}
-
-/* Last section spacing */
-.last-options {
-  margin-top: 30px;
-}
-
-/* Remove unnecessary borders and shadows */
-input:focus {
-  outline: 1px solid #999;
-}
-
-/* Additional vertical spacing between major sections */
-.major-section {
-  margin-bottom: 35px;
-}
+	

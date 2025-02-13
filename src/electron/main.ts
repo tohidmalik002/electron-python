@@ -31,11 +31,18 @@ ipcMain.handle("runPython", async (_event, arg) => {
       console.log(app.getPath('exe'))
       const user_path = app.getPath('exe').split('\\')
       console.log(user_path[0], user_path[1], user_path[2], "path")
-      const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
+      let script_path;
+      if (arg.report=='stock_ledger'){
+         script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\Stock_Ledger_Client_Format.py`
+      }
+      else{
+         script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\consumption.py`
+      }
+      
       console.log(script_path, "script path")
       const pythonProcess = spawn("python", [script_path]);
-      let output = app.getPath('exe');
-
+      //let output = app.getPath('exe');
+      let output = ''
       pythonProcess.stdout.on("data", (data) => {
           output += data.toString();
       });

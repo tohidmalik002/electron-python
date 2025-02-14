@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function StockForm() {
+function Consumption() {
   const [text, setText] = useState("");
   const [formData, setFormData] = useState({
     companyFrom: "SJ",
@@ -18,7 +18,7 @@ function StockForm() {
   const runPyScript = async () => {
     try {
       console.log("Sending data:", formData);
-      const output = await window.electron.runPython();
+      const output = await window.electron.runPython({report:"consumption"});
       setText(output);
     } catch (error: any) {
       setText(`Error: ${error.message}`);
@@ -38,11 +38,11 @@ function StockForm() {
             </tr>
             <tr className="border-b">
              <b> <td className="font-medium text-left py-2">Stone Class:</td></b>
-              <td className="text-left py-2" colSpan="3">&nbsp;&nbsp;{formData.stoneClass}</td>
+              <td className="text-left py-2" colSpan={3}>&nbsp;&nbsp;{formData.stoneClass}</td>
             </tr>
             <tr className="border-b">
              <b> <td className="font-medium text-left py-2">Rm Ctg:</td></b>
-              <td className="text-left py-2" colSpan="3">&nbsp;&nbsp;{formData.rmCtg}</td>
+              <td className="text-left py-2" colSpan={3}>&nbsp;&nbsp;{formData.rmCtg}</td>
             </tr>
             <tr className="border-b">
               <b><td className="font-medium text-left py-2">Vch Date:</td></b>
@@ -52,19 +52,19 @@ function StockForm() {
             </tr>
             <tr className="border-b">
               <b><td className="font-medium text-left py-2">Inv Date:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.considerDate} readOnly />
               </td>
             </tr>
             <tr className="border-b">
              <b> <td className="font-medium text-left py-2">Order Cust:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.showCustomer} readOnly />
               </td>
             </tr>
             <tr>
               <b><td className="font-medium text-left py-2">Stock Rate:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.showStckRate} readOnly />
               </td>
             </tr>
@@ -77,7 +77,7 @@ function StockForm() {
           onClick={runPyScript}
           className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
-          Download Consumption Report
+         Consumption (Raw Material)
         </button>
         <p className="mt-4">{text}</p>
       </div>
@@ -85,4 +85,4 @@ function StockForm() {
   );
 }
 
-export default StockForm;
+export default Consumption;

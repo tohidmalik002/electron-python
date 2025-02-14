@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import { spawn } from "child_process";
+import { exec, execFile, spawn } from "child_process";
 import path from "path";
 import {
  isDev
@@ -27,33 +27,31 @@ app.on("ready", async () => {
 });
 
 ipcMain.handle("runPython", async (_event, arg) => {
+  const user_path = app.getPath('exe').split('\\')
+  // console.log(user_path[0], user_path[1], user_path[2], "path")
+  // const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
+  let exePath;
+  if (arg.report=='stock_ledger'){
+      exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "Reports", 'dist', 'stock_ledger_emr');
+  }
+  else{
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "Reports", 'dist', 'consumption_emr');
+  }
   return new Promise((resolve, reject) => {
-      console.log(app.getPath('exe'))
-      const user_path = app.getPath('exe').split('\\')
-      console.log(user_path[0], user_path[1], user_path[2], "path")
-      let script_path;
-      if (arg.report=='stock_ledger'){
-         script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\Stock_Ledger_Client_Format.py`
+    exec(`"${exePath}"`, (error: any, stdout:any, stderr:any) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject(`Error: ${error.message}`);
+        return;
       }
-      else{
-         script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\consumption.py`
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        reject(`Error: ${stderr}`);
+        return;
       }
-      
-      console.log(script_path, "script path")
-      const pythonProcess = spawn("python", [script_path]);
-      //let output = app.getPath('exe');
-      let output = ''
-      pythonProcess.stdout.on("data", (data) => {
-          output += data.toString();
-      });
-
-      pythonProcess.stderr.on("data", (data) => {
-          reject(`Error: ${data.toString()}`);
-      });
-
-      pythonProcess.on("close", () => {
-          resolve(output.trim());
-      });
+      console.log(`stdout: ${stdout}`);
+      resolve(stdout.trim());
+    });
   });
 });
 function handleCloseEvents(mainWindow: BrowserWindow) {

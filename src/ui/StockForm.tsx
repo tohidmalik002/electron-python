@@ -20,10 +20,9 @@ function StockForm() {
 
   const runPyScript = async () => {
     try {
-      console.log("Sending data:", formData);
-      const output = await window.electron.runPython();
+      const output = await window.electron.runPython({report:"stock_ledger"});
       setText(output);
-    } catch (error) {
+    } catch (error:any) {
       setText(`Error: ${error.message}`);
     }
   };
@@ -41,7 +40,7 @@ function StockForm() {
             </tr>
             <tr className="border-b">
           <b>    <td className="font-medium text-left py-2">Location Type:</td></b>
-              <td className="text-left py-2" colSpan="3"> &nbsp;&nbsp;{formData.locationType}</td>
+              <td className="text-left py-2" colSpan={3}> &nbsp;&nbsp;{formData.locationType}</td>
             </tr>
             <tr className="border-b">
             <b>    <td className="font-medium text-left py-2">Location:</td></b>
@@ -51,7 +50,7 @@ function StockForm() {
             </tr>
             <tr className="border-b">
          <b>     <td className="font-medium text-left py-2">Rm Ctg:</td></b>
-              <td className="text-left py-2" colSpan="3"> &nbsp;&nbsp;{formData.rmCtg}</td>
+              <td className="text-left py-2" colSpan={3}> &nbsp;&nbsp;{formData.rmCtg}</td>
             </tr>
             <tr className="border-b">
              <b> <td className="font-medium text-left py-2">Vch Date:</td></b>
@@ -61,19 +60,19 @@ function StockForm() {
             </tr>
             <tr className="border-b">
             <b>  <td className="font-medium text-left py-2">Inv Date:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.considerDate} readOnly />
               </td>
             </tr>
             <tr className="border-b">
             <b><td className="font-medium text-left py-2">Order Cust:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.showCustomer} readOnly />
               </td>
             </tr>
             <tr>
             <b>  <td className="font-medium text-left py-2">Stock Rate:</td></b>
-              <td className="text-left py-2" colSpan="3">
+              <td className="text-left py-2" colSpan={3}>
                 <input type="checkbox" checked={formData.showStckRate} readOnly />
               </td>
             </tr>

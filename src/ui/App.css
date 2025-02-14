@@ -9,7 +9,7 @@ body {
 
 /* Navbar */
 nav {
-  background-color: #343a40;
+  background-color:  #10635A;
   padding: 1rem;
 }
 
@@ -20,13 +20,14 @@ nav .container {
 }
 
 nav a {
-  color: white;
+  
   text-decoration: none;
   padding: 0.5rem 1rem;
+
 }
 
  a:hover {
-  color: #007bff;
+  text-decoration: underline;
 }
 
 /* Page Wrapper */

@@ -2,7 +2,7 @@ import { app, BrowserWindow } from "electron";
 import { exec, execFile, spawn } from "child_process";
 import path from "path";
 import {
- isDev
+ isDev,storeDB
 } from "./util.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { ipcMain } from "electron";
@@ -54,6 +54,9 @@ ipcMain.handle("runPython", async (_event, arg) => {
     });
   });
 });
+ipcMain.handle("saveDBCred",async (_event, arg)=> {
+  storeDB(arg);
+})
 function handleCloseEvents(mainWindow: BrowserWindow) {
   let willClose = false;
 

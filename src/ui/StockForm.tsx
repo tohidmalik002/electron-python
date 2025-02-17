@@ -5,8 +5,8 @@ function StockForm() {
   const [formData, setFormData] = useState({
     companyFrom: "SJ",
     companyTo: "SJ",
-    vchDateFrom: new Date().toISOString().split("T")[0],
-    vchDateTo: new Date().toISOString().split("T")[0],
+    vchDateFrom:new Date().toLocaleDateString("en-GB"),
+    vchDateTo: new Date().toLocaleDateString("en-GB"),
     rmCtg: "C",
     rmSubCtg: "RND",
     showStckRate: true,
@@ -53,6 +53,12 @@ function StockForm() {
               <td className="text-left py-2" colSpan={3}> &nbsp;&nbsp;{formData.rmCtg}</td>
             </tr>
             <tr className="border-b">
+            <b>    <td className="font-medium text-left py-2">Rm Subctg:</td></b>
+              <td className="text-left py-2"> &nbsp;&nbsp;{formData.rmSubCtg}</td>
+              <td className="text-left py-2">to  &nbsp;&nbsp;&nbsp;&nbsp;</td>
+              <td className="text-left py-2"> &nbsp;&nbsp;{formData.rmSubCtg}</td>
+            </tr>
+            <tr className="border-b">
              <b> <td className="font-medium text-left py-2">Vch Date:</td></b>
               <td className="text-left py-2"> &nbsp;&nbsp;{formData.vchDateFrom} &nbsp;&nbsp;&nbsp;&nbsp;</td>
               <td className="text-left py-2">to &nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -86,7 +92,7 @@ function StockForm() {
           onClick={runPyScript}
           className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
-          Download Stock Report
+          Generate Stock Report
         </button>
       </div>
 

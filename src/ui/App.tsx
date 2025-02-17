@@ -3,6 +3,7 @@ import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar";
 import StockForm from "./StockForm";
 import Consumption from "./Consumption";
+import DB from './DB';
 import './App.css'
 
 const App: React.FC = () => {
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<StockForm />} />
           <Route path="/consumption" element={<Consumption />} />
+          <Route path="/db" element={<DB />} />
         </Routes>
       </div>
     </Router>

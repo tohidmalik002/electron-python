@@ -5,8 +5,8 @@ function Consumption() {
   const [formData, setFormData] = useState({
     companyFrom: "SJ",
     companyTo: "SJ",
-    vchDateFrom: new Date().toISOString().split("T")[0],
-    vchDateTo: new Date().toISOString().split("T")[0],
+    vchDateFrom: new Date().toLocaleDateString("en-GB"),
+    vchDateTo: new Date().toLocaleDateString("en-GB"),
     rmCtg: "C",
     rmSubCtg: "RND",
     showStckRate: true,
@@ -17,7 +17,6 @@ function Consumption() {
 
   const runPyScript = async () => {
     try {
-      console.log("Sending data:", formData);
       const output = await window.electron.runPython({report:"consumption"});
       setText(output);
     } catch (error: any) {
@@ -77,7 +76,7 @@ function Consumption() {
           onClick={runPyScript}
           className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
-         Consumption (Raw Material)
+        Generate Consumption (Raw Material) Report
         </button>
         <p className="mt-4">{text}</p>
       </div>

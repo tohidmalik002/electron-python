@@ -5,7 +5,7 @@ import StockForm from "./StockForm";
 import Consumption from "./Consumption";
 import DB from './DB';
 import './App.css'
-
+import ConsumptionReport from "./ConsumptionReport";
 const App: React.FC = () => {
   return (
     <Router>
@@ -15,6 +15,7 @@ const App: React.FC = () => {
           <Route path="/" element={<StockForm />} />
           <Route path="/consumption" element={<Consumption />} />
           <Route path="/db" element={<DB />} />
+          <Route path="/consumption_report" element={<ConsumptionReport />} />
         </Routes>
       </div>
     </Router>

@@ -17,7 +17,7 @@ function Consumption() {
 
   const runPyScript = async () => {
     try {
-      const output = await window.electron.runPython({report:"consumption"});
+      const output = await window.electron.runPython({report:"raw_material"});
       setText(output);
     } catch (error: any) {
       setText(`Error: ${error.message}`);

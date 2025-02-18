@@ -1,5 +1,5 @@
 {
-  "appId": "com.n-ziermann.electron-course",
+  "appId": "com.report-builder-8848",
   "files": ["dist-electron", "dist-react"],
   "extraResources": ["dist-electron/preload.cjs", "src/assets/**", "src/electron/forms/**/*.json","src/electron/script.py"],
   "icon": "./desktopIcon.png",

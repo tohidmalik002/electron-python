@@ -18,9 +18,9 @@ function StockForm() {
     considerDate: true,
   });
 
-  const runPyScript = async () => {
+  const runPyScript = async (report:any) => {
     try {
-      const output = await window.electron.runPython({report:"stock_ledger"});
+      const output = await window.electron.runPython({report:report});
       setText(output);
     } catch (error:any) {
       setText(`Error: ${error.message}`);
@@ -89,10 +89,16 @@ function StockForm() {
       <div className="mt-6 flex justify-center">
         <br></br><br></br>
         <button
-          onClick={runPyScript}
+          onClick={() => runPyScript('stock_ledger')}
           className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
         >
           Generate Stock Report
+        </button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button
+          onClick={() => runPyScript('stock_summary')}
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        >
+          Generate Stock Summary Report
         </button>
       </div>
 

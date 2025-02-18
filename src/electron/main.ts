@@ -19,17 +19,11 @@ app.on("ready", async () => {
   } else {
     mainWindow.loadFile(getUIPath());
   }
-
-  // pollResources(mainWindow);
-
   handleCloseEvents(mainWindow);
-  // createMenu(mainWindow);
 });
 
 ipcMain.handle("runPython", async (_event, arg) => {
   const user_path = app.getPath('exe').split('\\')
-  // console.log(user_path[0], user_path[1], user_path[2], "path")
-  // const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
   let exePath;
   if (arg.report=='stock_ledger'){
       exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_report');
@@ -64,25 +58,37 @@ ipcMain.handle("runPython", async (_event, arg) => {
 ipcMain.handle("saveDBCred",async (_event, arg)=> {
   storeDB(arg);
 })
-function handleCloseEvents(mainWindow: BrowserWindow) {
+
+
+function handleCloseEvents(mainWindow:any) {
   let willClose = false;
 
-  mainWindow.on("close", (e) => {
+  mainWindow.on("close", (e:any) => {
     if (willClose) {
       return;
     }
     e.preventDefault();
-    mainWindow.hide();
-    if (app.dock) {
-      app.dock.hide();
-    }
+    app.quit();
+  });
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
   });
 
   app.on("before-quit", () => {
     willClose = true;
+    if (mainWindow) {
+      mainWindow.destroy();
+    }
   });
 
   mainWindow.on("show", () => {
     willClose = false;
   });
 }
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

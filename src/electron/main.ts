@@ -2,7 +2,7 @@ import { app, BrowserWindow } from "electron";
 import { exec, execFile, spawn } from "child_process";
 import path from "path";
 import {
- isDev
+ isDev,storeDB
 } from "./util.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { ipcMain } from "electron";
@@ -32,11 +32,16 @@ ipcMain.handle("runPython", async (_event, arg) => {
   // const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
   let exePath;
   if (arg.report=='stock_ledger'){
-      exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "Reports", 'dist', 'stock_ledger_emr');
+      exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_report');
+  }
+  else if (arg.report=='consumption'){
+    console.log(arg)
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'consumption_report');
   }
   else{
-    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "Reports", 'dist', 'consumption_emr');
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'raw_material_report');
   }
+  console.log(exePath)
   return new Promise((resolve, reject) => {
     exec(`"${exePath}"`, (error: any, stdout:any, stderr:any) => {
       if (error) {
@@ -54,6 +59,9 @@ ipcMain.handle("runPython", async (_event, arg) => {
     });
   });
 });
+ipcMain.handle("saveDBCred",async (_event, arg)=> {
+  storeDB(arg);
+})
 function handleCloseEvents(mainWindow: BrowserWindow) {
   let willClose = false;
 

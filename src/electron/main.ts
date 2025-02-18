@@ -35,13 +35,15 @@ ipcMain.handle("runPython", async (_event, arg) => {
       exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_report');
   }
   else if (arg.report=='consumption'){
-    console.log(arg)
     exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'consumption_report');
   }
+  else if (arg.report=='stock_summary'){
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_summary_report');
+  }
+
   else{
     exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'raw_material_report');
   }
-  console.log(exePath)
   return new Promise((resolve, reject) => {
     exec(`"${exePath}"`, (error: any, stdout:any, stderr:any) => {
       if (error) {

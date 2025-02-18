@@ -1,8 +1,8 @@
 import { app, BrowserWindow } from "electron";
-import { spawn } from "child_process";
+import { exec, execFile, spawn } from "child_process";
 import path from "path";
 import {
- isDev
+ isDev,storeDB
 } from "./util.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { ipcMain } from "electron";
@@ -19,55 +19,76 @@ app.on("ready", async () => {
   } else {
     mainWindow.loadFile(getUIPath());
   }
-
-  // pollResources(mainWindow);
-
   handleCloseEvents(mainWindow);
-  // createMenu(mainWindow);
 });
 
 ipcMain.handle("runPython", async (_event, arg) => {
+  const user_path = app.getPath('exe').split('\\')
+  let exePath;
+  if (arg.report=='stock_ledger'){
+      exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_report');
+  }
+  else if (arg.report=='consumption'){
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'consumption_report');
+  }
+  else if (arg.report=='stock_summary'){
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_summary_report');
+  }
+
+  else{
+    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'raw_material_report');
+  }
   return new Promise((resolve, reject) => {
-      console.log(app.getPath('exe'))
-      const user_path = app.getPath('exe').split('\\')
-      console.log(user_path[0], user_path[1], user_path[2], "path")
-      const script_path = `${user_path[0]}\\${user_path[1]}\\${user_path[2]}\\Desktop\\script.py`
-      console.log(script_path, "script path")
-      const pythonProcess = spawn("python", [script_path]);
-      let output = app.getPath('exe');
-
-      pythonProcess.stdout.on("data", (data) => {
-          output += data.toString();
-      });
-
-      pythonProcess.stderr.on("data", (data) => {
-          reject(`Error: ${data.toString()}`);
-      });
-
-      pythonProcess.on("close", () => {
-          resolve(output.trim());
-      });
+    exec(`"${exePath}"`, (error: any, stdout:any, stderr:any) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        reject(`Error: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      resolve(stdout.trim());
+    });
   });
 });
-function handleCloseEvents(mainWindow: BrowserWindow) {
+ipcMain.handle("saveDBCred",async (_event, arg)=> {
+  storeDB(arg);
+})
+
+
+function handleCloseEvents(mainWindow:any) {
   let willClose = false;
 
-  mainWindow.on("close", (e) => {
+  mainWindow.on("close", (e:any) => {
     if (willClose) {
       return;
     }
     e.preventDefault();
-    mainWindow.hide();
-    if (app.dock) {
-      app.dock.hide();
-    }
+    app.quit();
+  });
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
   });
 
   app.on("before-quit", () => {
     willClose = true;
+    if (mainWindow) {
+      mainWindow.destroy();
+    }
   });
 
   mainWindow.on("show", () => {
     willClose = false;
   });
 }
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

@@ -21,14 +21,14 @@ function decryptData(encryptedData: string, ivHex: string) {
 }
 
 export function setDbCredentials(kwargs: any) {
-  const server = kwargs.server ? encryptData(kwargs.server) : null;
+  const host = kwargs.host ? encryptData(kwargs.host) : null;
   const port = kwargs.port ? encryptData(kwargs.port) : null;
-  const database = kwargs.database ? encryptData(kwargs.database) : null;
-  const username = kwargs.username ? encryptData(kwargs.username) : null;
+  const db_name = kwargs.db_name ? encryptData(kwargs.db_name) : null;
+  const user = kwargs.user ? encryptData(kwargs.user) : null;
   const password = kwargs.password ? encryptData(kwargs.password) : null;
 
   const store = new Store();
-  store.set('dbCredentials', { server, port, database, username, password });
+  store.set('dbCredentials', { host, port, db_name, user, password });
 
   return { status: "success" };
 }
@@ -38,21 +38,21 @@ export function getDbCredentials() {
   const encryptedCredentials:any = store.get('dbCredentials');
 
   if (!encryptedCredentials) {
-    return { status: "error", message: "No credentials found" };
+    return { status: "error", message: "No DB credentials found" };
   }
 
   const decryptedCredentials: any = {};
-  if (encryptedCredentials.server) {
-    decryptedCredentials.server = decryptData(encryptedCredentials.server.encryptedData, encryptedCredentials.server.iv);
+  if (encryptedCredentials.host) {
+    decryptedCredentials.host = decryptData(encryptedCredentials.host.encryptedData, encryptedCredentials.host.iv);
   }
   if (encryptedCredentials.port) {
     decryptedCredentials.port = decryptData(encryptedCredentials.port.encryptedData, encryptedCredentials.port.iv);
   }
-  if (encryptedCredentials.database) {
-    decryptedCredentials.database = decryptData(encryptedCredentials.database.encryptedData, encryptedCredentials.database.iv);
+  if (encryptedCredentials.db_name) {
+    decryptedCredentials.db_name = decryptData(encryptedCredentials.db_name.encryptedData, encryptedCredentials.db_name.iv);
   }
-  if (encryptedCredentials.username) {
-    decryptedCredentials.username = decryptData(encryptedCredentials.username.encryptedData, encryptedCredentials.username.iv);
+  if (encryptedCredentials.user) {
+    decryptedCredentials.user = decryptData(encryptedCredentials.user.encryptedData, encryptedCredentials.user.iv);
   }
   if (encryptedCredentials.password) {
     decryptedCredentials.password = decryptData(encryptedCredentials.password.encryptedData, encryptedCredentials.password.iv);

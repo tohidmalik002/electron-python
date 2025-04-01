@@ -5,6 +5,16 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
+
+}
+.shipping-bill input,
+.shipping-bill select {
+  width: 100px; /* Let Tailwind classes control the width */
+}
+
+.inp-grp{
+  margin-left: 10px;
+  margin-bottom: 0px !important;
 }
 
 /* Navbar */
@@ -45,7 +55,7 @@ form {
 
 input,
 select {
-  width: 100%;
+  width: auto;
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #ccc;
@@ -102,6 +112,7 @@ button:hover {
 .flex {
   display: flex;
   align-items: center;
+  flex-direction: row;
 }
 
 .gap-4 {
@@ -127,6 +138,6 @@ label {
 
   input,
   select {
-    width: 100%;
+    width: 10%;
   }
 }

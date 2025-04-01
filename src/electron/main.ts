@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from "electron";
-import { exec, execFile, spawn } from "child_process";
+import { exec } from "child_process";
 import path from "path";
 import {
- isDev,storeDB
+ isDev
 } from "./util.js";
+import { setDbCredentials, getDbCredentials } from "./db.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { ipcMain } from "electron";
 
@@ -24,22 +25,26 @@ app.on("ready", async () => {
 
 ipcMain.handle("runPython", async (_event, arg) => {
   const user_path = app.getPath('exe').split('\\')
-  let exePath;
-  if (arg.report=='stock_ledger'){
-      exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_report');
+  let exePath = null;
+  if (arg.report=='shipping_bill'){
+      exePath = path.join(user_path[0],user_path[1],user_path[2], '8848 App', 'dist', 'shipping_bill_json_generator');
   }
-  else if (arg.report=='consumption'){
-    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'consumption_report');
+  if(!exePath){
+    return "Invalid script option"
   }
-  else if (arg.report=='stock_summary'){
-    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'stock_ledger_summary_report');
+  const pyArgs: Record<string, any> = {};
+  const dbCredentials = getDbCredentials();
+  if(dbCredentials.status == "error"){
+    return dbCredentials.message
   }
+  pyArgs["formData"] = arg.formData
+  pyArgs["dbCredentials"] = dbCredentials.dbCredentials
+  pyArgs["jsonSavePath"] = path.join(user_path[0],user_path[1],user_path[2], '8848 App', 'shipping_bill');
+  const pyArgsString = JSON.stringify(pyArgs).replace(/"/g, '\\"');
 
-  else{
-    exePath = path.join(user_path[0],user_path[1],user_path[2],"Desktop", "8848 App", 'dist', 'raw_material_report');
-  }
+
   return new Promise((resolve, reject) => {
-    exec(`"${exePath}"`, (error: any, stdout:any, stderr:any) => {
+    exec(`"${exePath}" "${pyArgsString}"`, (error: any, stdout:any, stderr:any) => {
       if (error) {
         console.error(`exec error: ${error}`);
         reject(`Error: ${error.message}`);
@@ -55,10 +60,20 @@ ipcMain.handle("runPython", async (_event, arg) => {
     });
   });
 });
+
 ipcMain.handle("saveDBCred",async (_event, arg)=> {
-  storeDB(arg);
+  const response = setDbCredentials(arg.credentials);
+  if(response.status == "success"){
+    return "Db Credentials Saved Successfully"
+  }
+  else{
+    return "An Error occured while saving the db credentials"
+  }
 })
 
+ipcMain.handle("getDBCreds",async (_event, arg)=> {
+  return getDbCredentials();
+})
 
 function handleCloseEvents(mainWindow:any) {
   let willClose = false;
